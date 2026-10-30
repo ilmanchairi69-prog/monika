@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>@yield('title','Dashboard') · MONIKA</title><link rel="stylesheet" href="{{ asset('css/monika.css') }}"><script src="{{ asset('js/monika.js') }}" defer></script></head><body>
+@auth
+<aside class="sidebar"><a class="brand" href="/dashboard"><span class="mark">m.</span> MONIKA</a><small class="muted">RUANG KERJA MAGANG</small><nav>
+@foreach(['/dashboard'=>['◈','Dashboard'],'/absensi'=>['◷','Absensi'],'/logbook'=>['▤','Logbook']] as $url=>$nav)<a class="{{ request()->is(ltrim($url,'/'))?'selected':'' }}" href="{{ $url }}"><span>{{ $nav[0] }}</span>{{ $nav[1] }}</a>@endforeach
+@if(auth()->user()->role==='admin')<small class="muted">ADMINISTRASI</small>@foreach(['/admin/pengajuan'=>['→','Pengajuan magang'],'/pengguna'=>['♧','Pengguna'],'/kelompok'=>['▦','Kelompok']] as $url=>$nav)<a class="{{ request()->is(ltrim($url,'/'))?'selected':'' }}" href="{{ $url }}"><span>{{ $nav[0] }}</span>{{ $nav[1] }}</a>@endforeach @endif
+@if(in_array(auth()->user()->role,['admin','mentor']))<a href="/laporan" class="{{ request()->is('laporan')?'selected':'' }}"><span>▥</span>Laporan</a>@endif</nav><div class="sidebar-bottom"><span class="avatar">{{ mb_substr(auth()->user()->name,0,1) }}</span><div><strong>{{ auth()->user()->name }}</strong><small>{{ ucfirst(auth()->user()->role) }}</small></div><form action="/logout" method="post">@csrf<button class="icon" title="Keluar">→</button></form></div></aside>
+<div class="workspace"><header class="topbar"><button class="icon mobile" data-toggle-menu aria-label="Buka navigasi">☰</button><span>Workspace <span class="muted">/ @yield('title','Dashboard')</span></span><span class="muted">{{ now()->translatedFormat('l, d F Y') }} <span class="online"></span></span></header><main>
+@else<header class="public-nav"><a class="brand" href="/"><span class="mark">m.</span> MONIKA</a><nav><a href="/">Beranda</a><a href="/pengajuan">Ajukan magang</a><a class="button" href="/login">Masuk akun →</a></nav></header><main class="public-main">@endauth
+@if(session('success'))<div role="status" class="alert success">✓ {{ session('success') }}</div>@endif
+@if($errors->any())<div role="alert" class="alert error"><strong>Periksa kembali data Anda.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+@yield('content')</main>@auth<footer>MONIKA <span>Monitoring Anak Magang · Ruang bertumbuh bersama.</span></footer></div>@endauth
+</body></html>
